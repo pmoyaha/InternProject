@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="IRIS" version="26" zv="IRIS for Windows (x86-64) 2019.1.1 (Build 612U)" ts="2020-03-16 11:15:34">
+<Class name="Ahayom.CreateInvalid">
+<Super>Ens.BusinessOperation</Super>
+<TimeChanged>65449,34715.96987</TimeChanged>
+<TimeCreated>65444,36407.224851</TimeCreated>
+
+<Parameter name="INVOCATION">
+<Default>Queue</Default>
+</Parameter>
+
+<Method name="CreateInvalidUser">
+<FormalSpec>pRequest:Ahayom.InvalidProfileRequest,*pResponse:Ahayom.InvalidProfileResponse</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	//set values assigning them to the variables carrying characters
+	//create instance of the class
+	set invalid = ##class(Ahayom.Invalid).%New()
+	set sc = $$$OK
+	
+	try {
+		//set value created aasign to the variable 
+		set invalid.FirstName =pRequest.FirstName
+		set invalid.Surname = pRequest.Surname
+		set invalid.IDNumber = pRequest.IDNumber
+		set invalid.ContactNumber = pRequest.ContactNumber
+		set invalid.Gender = pRequest.Gender
+		set invalid.Member = pRequest.Member
+		set invalid.Dateofbirth = pRequest.Dateofbirth
+		set invalid.Dependents = pRequest.Dependents
+		
+		set result = invalid.%Save()
+		set pResponse = ##class(Ahayom.InvalidProfileResponse).%New()
+		//error handling if result its valid get successful response if not bring ERROR
+		if result = $$$OK {
+		set pResponse.Ok = "Successful"
+		}
+		else {
+			set pResponse.Ok = "error"
+		} 
+		$$$ThrowOnError(result)
+		
+	}
+	catch ex{
+		set result = ex.AsStatus()
+	}
+	quit sc
+]]></Implementation>
+</Method>
+
+<XData name="MessageMap">
+<Data><![CDATA[
+<MapItems>
+	<MapItem MessageType="Ahayom.InvalidProfileRequest"> 
+		<Method>CreateInvalidUser</Method>
+	</MapItem>
+</MapItems>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Ahayom.DeleteInvalid">
+<Super>Ens.BusinessOperation</Super>
+<TimeChanged>65450,40840.719889</TimeChanged>
+<TimeCreated>65450,39141.465693</TimeCreated>
+
+<Parameter name="INVOCATION">
+<Default>Queue</Default>
+</Parameter>
+
+<Method name="DeleteInvalidUser">
+<FormalSpec>pRequest:Ahayom.DeleteProfileRequest,*pResponse:Ahayom.DeleteProfileResponse</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+
+	set invalid = ##class(Ahayom.Invalid).IDNumberIndexDelete(pRequest.IDNumber)
+	set result = $$$OK
+	try{
+		set pResponse = ##class(Ahayom.DeleteProfileResponse).%New()
+		//error handling if result its valid get successful response if not bring ERROR
+		if result = $$$OK {
+		set pResponse.Deleted = "Ok"
+		}
+		else {
+			set pResponse.Deleted = "error"
+		} 
+		$$$ThrowOnError(result)
+		
+		
+		
+		}		
+		catch ex{
+			set result = ex.AsStatus()
+			
+			}
+			return result
+]]></Implementation>
+</Method>
+
+<XData name="MessageMap">
+<Data><![CDATA[
+<MapItems>
+	<MapItem MessageType="Ahayom.DeleteProfileRequest"> 
+		<Method>DeleteInvalidUser</Method>
+	</MapItem>
+</MapItems>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Ahayom.DeleteProfileRequest">
+<Super>Ens.Request</Super>
+<TimeChanged>65450,39621.160385</TimeChanged>
+<TimeCreated>65450,38355.435943</TimeCreated>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>DeleteProfileRequestDefaultData</DefaultData>
+<Data name="DeleteProfileRequestDefaultData">
+<Subscript>"DeleteProfileRequest"</Subscript>
+<Value name="1">
+<Value>FirstName</Value>
+</Value>
+<Value name="2">
+<Value>Surname</Value>
+</Value>
+<Value name="3">
+<Value>ContactNumber</Value>
+</Value>
+<Value name="4">
+<Value>Dependents</Value>
+</Value>
+<Value name="5">
+<Value>IDNumber</Value>
+</Value>
+</Data>
+</Storage>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="IDNumberIndex">
+<Properties>IDNumber</Properties>
+</Index>
+</Class>
+
+
+<Class name="Ahayom.DeleteProfileResponse">
+<Super>Ens.Response</Super>
+<TimeChanged>65450,40059.981635</TimeChanged>
+<TimeCreated>65450,38408.43585</TimeCreated>
+
+<Property name="Deleted">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>DeleteProfileResponseDefaultData</DefaultData>
+<Data name="DeleteProfileResponseDefaultData">
+<Subscript>"DeleteProfileResponse"</Subscript>
+<Value name="1">
+<Value>deleted</Value>
+</Value>
+<Value name="2">
+<Value>Deleted</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ahayom.Invalid">
+<Copyright>/*defining a table by creating a persistent class giving the table name invalids and populate the table with rows of test data*/</Copyright>
+<SqlTableName>invalids</SqlTableName>
+<Super>%Persistent,%Populate</Super>
+<TimeChanged>65450,56042.77998</TimeChanged>
+<TimeCreated>65448,37502.112946</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[
+// defining the table as a persistent class allows to define properties that carry specific values
+
+]]></Content>
+</UDLText>
+
+<UDLText name="T">
+<Content><![CDATA[
+// valuelist specification an INSERT or UPDATE for values if values results in field value failed validation ERROR
+
+]]></Content>
+</UDLText>
+
+<Property name="FirstName">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Surname">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Index name="IDNumberIndex">
+<Properties>IDNumber</Properties>
+<Unique>1</Unique>
+</Index>
+
+<Property name="ContactNumber">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="10"/>
+<Parameter name="MINLEN" value="10"/>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="DISPLAYLIST" value=",male,female"/>
+<Parameter name="VALUELIST" value=",male,female"/>
+</Property>
+
+<Property name="Member">
+<Type>%Boolean</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Property name="Dateofbirth">
+<Type>%String</Type>
+</Property>
+
+<Property name="Dependents">
+<Type>%Integer</Type>
+<InitialExpression>0</InitialExpression>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^Ahayom.InvalidD</DataLocation>
+<DefaultData>InvalidDefaultData</DefaultData>
+<IdLocation>^Ahayom.InvalidD</IdLocation>
+<IndexLocation>^Ahayom.InvalidI</IndexLocation>
+<StreamLocation>^Ahayom.InvalidS</StreamLocation>
+<Data name="InvalidDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>FirstName</Value>
+</Value>
+<Value name="3">
+<Value>Surname</Value>
+</Value>
+<Value name="4">
+<Value>ContactNumber</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>Member</Value>
+</Value>
+<Value name="7">
+<Value>Dateofbirth</Value>
+</Value>
+<Value name="8">
+<Value>Dependents</Value>
+</Value>
+<Value name="9">
+<Value>IDNumber</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ahayom.InvalidProfileRequest">
+<Super>Ens.Request</Super>
+<TimeChanged>65448,43539.83153</TimeChanged>
+<TimeCreated>65444,34040.941724</TimeCreated>
+
+<Property name="FirstName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Surname">
+<Type>%String</Type>
+</Property>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="ContactNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+<Parameter name="DISPLAYLIST" value=",male,female"/>
+<Parameter name="VALUELIST" value=",male,female"/>
+</Property>
+
+<Property name="Member">
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="Dateofbirth">
+<Type>%Date</Type>
+</Property>
+
+<Property name="Dependents">
+<Type>%Integer</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>InvalidProfileRequestDefaultData</DefaultData>
+<Data name="InvalidProfileRequestDefaultData">
+<Subscript>"InvalidProfileRequest"</Subscript>
+<Value name="1">
+<Value>FirstName</Value>
+</Value>
+<Value name="2">
+<Value>Surname</Value>
+</Value>
+<Value name="3">
+<Value>IDNumber</Value>
+</Value>
+<Value name="4">
+<Value>ContactNumber</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>Member</Value>
+</Value>
+<Value name="7">
+<Value>Dateofbirth</Value>
+</Value>
+<Value name="8">
+<Value>Dependents</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ahayom.InvalidProfileResponse">
+<Super>Ens.Response</Super>
+<TimeChanged>65444,55943.225987</TimeChanged>
+<TimeCreated>65444,37596.197312</TimeCreated>
+
+<UDLText name="T">
+<Content><![CDATA[/*Response for createInvalid*/
+]]></Content>
+</UDLText>
+
+<Property name="Ok">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>InvalidProfileResponseDefaultData</DefaultData>
+<Data name="InvalidProfileResponseDefaultData">
+<Subscript>"InvalidProfileResponse"</Subscript>
+<Value name="1">
+<Value>FirstName</Value>
+</Value>
+<Value name="2">
+<Value>Surname</Value>
+</Value>
+<Value name="3">
+<Value>IDNumber</Value>
+</Value>
+<Value name="4">
+<Value>ContactNumber</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>Member</Value>
+</Value>
+<Value name="7">
+<Value>Dateofbirth</Value>
+</Value>
+<Value name="8">
+<Value>Dependents</Value>
+</Value>
+<Value name="9">
+<Value>Welcome</Value>
+</Value>
+<Value name="10">
+<Value>Ok</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ahayom.InvalidProfileValidation">
+<Super>%Persistent,%Populate</Super>
+<TimeChanged>65454,39733.229158</TimeChanged>
+<TimeCreated>65451,36791.61786</TimeCreated>
+
+<Method name="ValidateIDNumber">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>IDNumber:%String</FormalSpec>
+<Implementation><![CDATA[
+	if ($LENGTH(IDNumber) = 13)
+	{
+		set odd = 0
+		set even = ""
+		set i = 1
+		while(i < $LENGTH(IDNumber))
+		{
+			set odd = odd + $EXTRACT(IDNumber,i,i)
+			set i = i + 1
+			
+			set even = even_$EXTRACT(IDNumber,i,i)
+			set i = i + 1
+		} 
+		set addeven = even * 2
+		set num = 0
+		set i = 1
+		while(i <= $LENGTH(addeven))
+		{	
+		set num = num + $EXTRACT(addeven,i)
+		set i = i + 1
+		}
+		set oddeven = odd + num 
+		set final = 10 - $EXTRACT(oddeven,2)
+		if final = $EXTRACT(IDNumber,13)
+		{
+		write 1
+		return 1
+		}
+		}
+		write 0
+		return 0
+]]></Implementation>
+</Method>
+
+<Method name="ValidateDateofbirth">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>IDNumber:%String</FormalSpec>
+<Implementation><![CDATA[
+	if ($LENGTH(IDNumber) = 6)
+	{
+		set odd = 0
+		set even = ""
+		set i = 1
+		while(i < $LENGTH(IDNumber))
+		{
+			set odd = odd + $EXTRACT(IDNumber,i,i)
+			set i = i + 1
+			
+			set even = even_$EXTRACT(IDNumber,i,i)
+			set i = i + 1
+		} 
+			
+		}
+		write 1
+		return 1
+	
+		write 0
+		return 0
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DataLocation>^Ahayom.InvalidProf4EDCD</DataLocation>
+<DefaultData>InvalidProfileValidationDefaultData</DefaultData>
+<IdLocation>^Ahayom.InvalidProf4EDCD</IdLocation>
+<IndexLocation>^Ahayom.InvalidProf4EDCI</IndexLocation>
+<StreamLocation>^Ahayom.InvalidProf4EDCS</StreamLocation>
+<Data name="InvalidProfileValidationDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+</Data>
+</Storage>
+
+<Method name="ValidateContactnumber">
+<ClassMethod>1</ClassMethod>
+<FormalSpec>ContactNumber:%String</FormalSpec>
+<Implementation><![CDATA[
+	if ($LENGTH(ContactNumber) = 10)
+	{
+		set odd = 0
+		set even = ""
+		set i = 1
+		while(i < $LENGTH(ContactNumber))
+		{
+			set odd = odd + $EXTRACT(ContactNumber,i,i)
+			set i = i + 1
+			
+			set even = even_$EXTRACT(ContactNumber,i,i)
+			set i = i + 1
+		} 
+			
+		}
+		write 1
+		return 1
+	
+		write 0
+		return 0
+]]></Implementation>
+</Method>
+</Class>
+
+
+<Class name="Ahayom.ProfileUser">
+<Super>Ens.Production</Super>
+<TimeChanged>65454,32604.510637</TimeChanged>
+<TimeCreated>65444,38335.699747</TimeCreated>
+
+<XData name="ProductionDefinition">
+<Data><![CDATA[
+<Production Name="Ahayom.ProfileUser" TestingEnabled="true" LogGeneralTraceEvents="false">
+  <Description></Description>
+  <ActorPoolSize>2</ActorPoolSize>
+  <Item Name="Ahayom.CreateInvalid" Category="" ClassName="Ahayom.CreateInvalid" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+  <Item Name="Ahayom.ReadInvalid" Category="" ClassName="Ahayom.ReadInvalid" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+  <Item Name="Ahayom.UpdateInvalid" Category="" ClassName="Ahayom.UpdateInvalid" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+  <Item Name="Ahayom.DeleteInvalid" Category="" ClassName="Ahayom.DeleteInvalid" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
+  </Item>
+</Production>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Ahayom.ReadInvalid">
+<Super>Ens.BusinessOperation</Super>
+<TimeChanged>65451,32215.969883</TimeChanged>
+<TimeCreated>65444,53567.079306</TimeCreated>
+
+<Parameter name="INVOCATION">
+<Default>Queue</Default>
+</Parameter>
+
+<Method name="ReadInvaliUser">
+<FormalSpec>pRequest:Ahayom.ReadProfileRequest,*pResponse:Ahayom.ReadProfileResponse</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set sc = $$$OK
+	try{
+		set pResponse = ##class(Ahayom.ReadProfileResponse).%New()
+		set invalid = ##class(Ahayom.Invalid).IDNumberIndexOpen(pRequest.IDNumber)
+		//set sc = invalid.%ValidateObject()
+		set pResponse.FirstName = invalid.FirstName
+		set pResponse.Surname = invalid.Surname
+		set pResponse.IDNumber = invalid.IDNumber
+		set pResponse.ContactNumber = invalid.ContactNumber
+		set pResponse.Gender = invalid.Gender
+		set pResponse.Member = invalid.Member
+		set pResponse.Dateofbirth = invalid.Dateofbirth
+		set pResponse.Dependents = invalid.Dependents
+
+	}
+	
+	catch ex{
+		set sc = ex.AsStatus()
+	}
+	return sc
+]]></Implementation>
+</Method>
+
+<XData name="MessageMap">
+<Data><![CDATA[
+<MapItems>
+	<MapItem MessageType="Ahayom.ReadProfileRequest"> 
+		<Method>ReadInvaliUser</Method>
+	</MapItem>
+</MapItems>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Ahayom.ReadProfileRequest">
+<Super>Ens.Request</Super>
+<TimeChanged>65450,41625.241658</TimeChanged>
+<TimeCreated>65444,56239.834458</TimeCreated>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>ReadProfileRequestDefaultData</DefaultData>
+<Data name="ReadProfileRequestDefaultData">
+<Subscript>"ReadProfileRequest"</Subscript>
+<Value name="1">
+<Value>IDNumber</Value>
+</Value>
+</Data>
+</Storage>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+</Property>
+</Class>
+
+
+<Class name="Ahayom.ReadProfileResponse">
+<Super>Ens.Response</Super>
+<TimeChanged>65448,32041.340159</TimeChanged>
+<TimeCreated>65444,56306.30588</TimeCreated>
+
+<Property name="FirstName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Surname">
+<Type>%String</Type>
+</Property>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="ContactNumber">
+<Type>%String</Type>
+</Property>
+
+<Property name="Gender">
+<Type>%String</Type>
+</Property>
+
+<Property name="Member">
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="Dateofbirth">
+<Type>%Date</Type>
+</Property>
+
+<Property name="Dependents">
+<Type>%Integer</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>ReadProfileResponseDefaultData</DefaultData>
+<Data name="ReadProfileResponseDefaultData">
+<Subscript>"ReadProfileResponse"</Subscript>
+<Value name="1">
+<Value>FirstName</Value>
+</Value>
+<Value name="2">
+<Value>Surname</Value>
+</Value>
+<Value name="3">
+<Value>IDNumber</Value>
+</Value>
+<Value name="4">
+<Value>ContactNumber</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>Member</Value>
+</Value>
+<Value name="7">
+<Value>Dateofbirth</Value>
+</Value>
+<Value name="8">
+<Value>Dependents</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ahayom.UpdateInvalid">
+<Super>Ens.BusinessOperation</Super>
+<TimeChanged>65449,53455.35425</TimeChanged>
+<TimeCreated>65449,35303.099014</TimeCreated>
+
+<Parameter name="INVOCATION">
+<Default>Queue</Default>
+</Parameter>
+
+<Method name="UpdateInvalidUser">
+<FormalSpec>pRequest:Ahayom.UpdateProfileRequest,*pResponse:Ahayom.UpdateProfileResponse</FormalSpec>
+<ReturnType>%Status</ReturnType>
+<Implementation><![CDATA[
+	set invalid = ##class(Ahayom.Invalid).IDNumberIndexOpen(pRequest.IDNumber)
+	set result = $$$OK
+	
+	try{
+		set invalid.FirstName = pRequest.FirstName
+		set invalid.Surname = pRequest.Surname
+		set invalid.IDNumber = pRequest.IDNumber
+		set invalid.ContactNumber = pRequest.ContactNumber
+		set invalid.Member = pRequest.Member
+		set invalid.Dependents = pRequest.Dependents
+		
+		set result = invalid.%Save()
+		set pResponse = ##class(Ahayom.UpdateProfileResponse).%New()
+		//error handling if result its valid get successful response if not bring ERROR
+		if result = $$$OK {
+		set pResponse.Successful = "Ok"
+		}
+		else {
+			set pResponse.Successful = "error"
+		} 
+		$$$ThrowOnError(result)
+		
+		
+		
+		}		
+		catch ex{
+			set result = ex.AsStatus()
+			
+			}
+			return result
+]]></Implementation>
+</Method>
+
+<XData name="MessageMap">
+<Data><![CDATA[
+<MapItems>
+	<MapItem MessageType="Ahayom.UpdateProfileRequest"> 
+		<Method>UpdateInvalidUser</Method>
+	</MapItem>
+</MapItems>
+]]></Data>
+</XData>
+</Class>
+
+
+<Class name="Ahayom.UpdateProfileRequest">
+<Super>Ens.Request</Super>
+<TimeChanged>65449,53506.191006</TimeChanged>
+<TimeCreated>65449,34854.1688</TimeCreated>
+
+<Property name="FirstName">
+<Type>%String</Type>
+</Property>
+
+<Property name="Surname">
+<Type>%String</Type>
+</Property>
+
+<Property name="ContactNumber">
+<Type>%String</Type>
+<Parameter name="MAXLEN" value="10"/>
+<Parameter name="MINLEN" value="10"/>
+</Property>
+
+<Property name="Member">
+<Type>%Boolean</Type>
+</Property>
+
+<Property name="Dependents">
+<Type>%Integer</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>UpdateProfileRequestDefaultData</DefaultData>
+<Data name="UpdateProfileRequestDefaultData">
+<Subscript>"UpdateProfileRequest"</Subscript>
+<Value name="1">
+<Value>FirstName</Value>
+</Value>
+<Value name="2">
+<Value>Surname</Value>
+</Value>
+<Value name="3">
+<Value>IDNumber</Value>
+</Value>
+<Value name="4">
+<Value>ContactNumber</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>Member</Value>
+</Value>
+<Value name="7">
+<Value>Dateofbirth</Value>
+</Value>
+<Value name="8">
+<Value>Dependents</Value>
+</Value>
+</Data>
+</Storage>
+
+<Property name="IDNumber">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+</Class>
+
+
+<Class name="Ahayom.UpdateProfileResponse">
+<Super>Ens.Response</Super>
+<TimeChanged>65449,42187.522423</TimeChanged>
+<TimeCreated>65449,34899.146126</TimeCreated>
+
+<Property name="Successful">
+<Type>%String</Type>
+</Property>
+
+<Storage name="Default">
+<Type>%Storage.Persistent</Type>
+<DefaultData>UpdateProfileResponseDefaultData</DefaultData>
+<Data name="UpdateProfileResponseDefaultData">
+<Subscript>"UpdateProfileResponse"</Subscript>
+<Value name="1">
+<Value>FirstName</Value>
+</Value>
+<Value name="2">
+<Value>Surname</Value>
+</Value>
+<Value name="3">
+<Value>IDNumber</Value>
+</Value>
+<Value name="4">
+<Value>ContactNumber</Value>
+</Value>
+<Value name="5">
+<Value>Gender</Value>
+</Value>
+<Value name="6">
+<Value>Member</Value>
+</Value>
+<Value name="7">
+<Value>Dateofbirth</Value>
+</Value>
+<Value name="8">
+<Value>Dependents</Value>
+</Value>
+<Value name="9">
+<Value>Ok</Value>
+</Value>
+<Value name="10">
+<Value>Successful</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Package name="Ahayom" sqlname="Ahayom"/>
+</Export>
